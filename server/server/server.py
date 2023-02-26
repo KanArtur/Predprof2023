@@ -1,8 +1,10 @@
 #! /usr/bin/env python3
+
+from json import JSONDecodeError
 from flask import Flask, request, make_response, jsonify
 from core import Device
-from json import JSONDecodeError
 import json
+import os
 from functools import reduce
 
 device = Device()
@@ -21,9 +23,12 @@ class ClientError(Exception):
 
 
 def read_config():
-    with open("config.json") as file:
-        data = json.load(file)
-        return data["server"]
+    if os.path.isdir("config.json"):
+        with open("config.json") as file:
+            data = json.load(file)
+            return data["server"]
+    else:
+        return {"port": 0, "debug": False}
 
 
 def validate_driver_id(idx):
